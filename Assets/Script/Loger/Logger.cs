@@ -6,7 +6,7 @@ public class Logger : MonoBehaviour
     [Header("Setting")]
     [SerializeField] private bool showLogs;
     // [SerializeField] private string prefix;
-    [SerializeField] private Color prefixColor;
+    [SerializeField] public Color prefixColor;
 
     public void Log(object message, Object sender)
     {

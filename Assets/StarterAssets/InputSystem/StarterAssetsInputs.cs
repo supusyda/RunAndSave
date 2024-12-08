@@ -12,6 +12,8 @@ namespace StarterAssets
 		public Vector2 look;
 		public bool jump;
 		public bool sprint;
+		public bool tap;
+
 
 		[Header("Movement Settings")]
 		public bool analogMovement;
@@ -28,12 +30,17 @@ namespace StarterAssets
 
 		public void OnLook(InputValue value)
 		{
-			if(cursorInputForLook)
+			if (cursorInputForLook)
 			{
 				LookInput(value.Get<Vector2>());
 			}
 		}
+		public void OnTap(InputValue value)
+		{
+			TapInput(value.isPressed);
+			Debug.Log("TAP");
 
+		}
 		public void OnJump(InputValue value)
 		{
 			JumpInput(value.isPressed);
@@ -49,8 +56,11 @@ namespace StarterAssets
 		public void MoveInput(Vector2 newMoveDirection)
 		{
 			move = newMoveDirection;
-		} 
-
+		}
+		public void TapInput(bool newTapState)
+		{
+			tap = newTapState;
+		}
 		public void LookInput(Vector2 newLookDirection)
 		{
 			look = newLookDirection;
@@ -76,5 +86,5 @@ namespace StarterAssets
 			Cursor.lockState = newState ? CursorLockMode.Locked : CursorLockMode.None;
 		}
 	}
-	
+
 }
