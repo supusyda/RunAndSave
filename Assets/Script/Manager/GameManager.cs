@@ -1,15 +1,20 @@
+using System;
 using System.Collections.Generic;
 using UnityEngine;
+using UnityEngine.Events;
 
 public class GameManager : MonoBehaviour
 {
 
     public static GameManager Instance { get; private set; }
     [SerializeField] private List<LevelSO> _levels = new();
+    public static UnityEvent<int> OnPassFinishLine = new();
+
     private GameState _currentGameState;
     Logger logger;
-
     private int _currentLevel = 1;
+    private int _currentPhase = 1;
+
 
     private void Awake()
     {
@@ -25,6 +30,19 @@ public class GameManager : MonoBehaviour
 
         logger = GetComponent<Logger>();
     }
+    void OnEnable()
+    {
+        OnPassFinishLine.AddListener(PassFinishLine);
+    }
+    void OnDisable()
+    {
+        OnPassFinishLine.RemoveListener(PassFinishLine);
+    }
+    private void PassFinishLine(int finishLineNum)
+    {
+
+    }
+
     void Start()
     {
         ChangeGameState(GameState.SpawnCat);
@@ -40,10 +58,14 @@ public class GameManager : MonoBehaviour
                 _currentGameState = GameState.SpawnCat;
                 break;
             case GameState.SpawnObject:
+                SpawnManager.OnSpawnFinishLine.Invoke(_levels[_currentLevel - 1]);
+                logger.Log("SpawnObject", this);
+                _currentGameState = GameState.SpawnObject;
                 break;
             case GameState.SpawnChasing:
                 Chasing.SetUpChasing.Invoke(_levels[_currentLevel - 1].chasingSO);
                 logger.Log("SpawnChasing", this);
+                ChangeGameState(GameState.SpawnObject);
                 _currentGameState = GameState.SpawnChasing;
                 break;
             case GameState.CutScene:

@@ -8,6 +8,7 @@ public class LevelSO : ScriptableObject
     // Start is called once before the first execution of Update after the MonoBehaviour is created
     public List<CatData> cats = new List<CatData>();
     public ChasingSO chasingSO;
+    public List<Phase> phases = new List<Phase>();
 
 
 }

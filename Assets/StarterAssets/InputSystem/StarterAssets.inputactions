@@ -234,7 +234,7 @@
                     "path": "<Mouse>/leftButton",
                     "interactions": "",
                     "processors": "",
-                    "groups": ";KeyboardMouse",
+                    "groups": ";KeyboardMouse;New Control Scheme",
                     "action": "Tap",
                     "isComposite": false,
                     "isPartOfComposite": false
@@ -245,7 +245,7 @@
                     "path": "<Touchscreen>/Press",
                     "interactions": "",
                     "processors": "",
-                    "groups": ";Gamepad",
+                    "groups": ";New Control Scheme",
                     "action": "Tap",
                     "isComposite": false,
                     "isPartOfComposite": false
@@ -300,6 +300,22 @@
             "name": "PS4 Controller",
             "bindingGroup": "PS4 Controller",
             "devices": []
+        },
+        {
+            "name": "New Control Scheme",
+            "bindingGroup": "New Control Scheme",
+            "devices": [
+                {
+                    "devicePath": "<Mouse>",
+                    "isOptional": false,
+                    "isOR": false
+                },
+                {
+                    "devicePath": "<Touchscreen>",
+                    "isOptional": false,
+                    "isOR": false
+                }
+            ]
         }
     ]
 }

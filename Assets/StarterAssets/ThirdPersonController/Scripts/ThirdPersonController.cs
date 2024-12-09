@@ -123,6 +123,8 @@ namespace StarterAssets
         }
         float tapMagnitude = 1f;
         public bool isPhase2 = false;
+        private bool _canMove = true;
+
 
         private void Awake()
         {
@@ -132,6 +134,23 @@ namespace StarterAssets
                 _mainCamera = GameObject.FindGameObjectWithTag("MainCamera");
             }
         }
+        void OnEnable()
+        {
+
+        }
+        void OnDisable()
+        {
+            _input.OnTapEvent.RemoveListener(OnTapEvent);
+        }
+
+        private void OnTapEvent()
+        {
+            const float additinalManitude = .3f;
+
+            tapMagnitude += additinalManitude;
+
+        }
+
 
         private void Start()
         {
@@ -152,12 +171,30 @@ namespace StarterAssets
             _jumpTimeoutDelta = JumpTimeout;
             _fallTimeoutDelta = FallTimeout;
             isPhase2 = false;
+            _canMove = true;
+            _input.OnTapEvent.AddListener(OnTapEvent);
+            GameManager.OnPassFinishLine.AddListener(OnPassFinishLine);
+
         }
+
+        private void OnPassFinishLine(int finishLineNumber)
+        {
+            if (finishLineNumber == 1)// can use enum
+            {
+                isPhase2 = true;
+            }
+            else if (finishLineNumber == 2)
+            {
+                _canMove = false;
+            }
+
+        }
+
 
         private void Update()
         {
             _hasAnimator = TryGetComponent(out _animator);
-
+            if (!_canMove) return;
             JumpAndGravity();
             GroundedCheck();
             if (isPhase2 == true)
@@ -292,18 +329,23 @@ namespace StarterAssets
         {
             // set target speed based on move speed, sprint speed and if sprint is pressed
             float targetSpeed = MoveSpeed;
-            const float additinalManitude = .3f;
             // a simplistic acceleration and deceleration designed to be easy to remove, replace, or iterate upon
-
+            if (tapMagnitude > 1)
+            {
+                tapMagnitude -= Time.deltaTime;
+            }
+            else
+            {
+                tapMagnitude = 1;
+            }
             // note: Vector2's == operator uses approximation so is not floating point error prone, and is cheaper than magnitude
             // if there is no input, set the target speed to 0
-            _input.move = Vector3.forward;
-
+            _input.move = Vector3.up;
+            targetSpeed *= tapMagnitude;
             // a reference to the players current horizontal velocity
             float currentHorizontalSpeed = new Vector3(_controller.velocity.x, 0.0f, _controller.velocity.z).magnitude;
 
             float speedOffset = 0.1f;
-            tapMagnitude += additinalManitude;
 
             // accelerate or decelerate to target speed
             if (currentHorizontalSpeed < targetSpeed - speedOffset ||

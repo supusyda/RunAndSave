@@ -2,6 +2,7 @@ using UnityEngine;
 
 public class InteractOjb : MonoBehaviour, IDetectedObj
 {
+    [SerializeField] private FillBar fillBar;
     // Start is called once before the first execution of Update after the MonoBehaviour is created
     public float fullFillValue = 0;
     private float maxFullFillValue = 3;
@@ -14,6 +15,7 @@ public class InteractOjb : MonoBehaviour, IDetectedObj
     void Awake()
     {
         jumpOnPlayerHead = GetComponent<JumpOnPlayerHead>();
+        // fillBar = transform.Find("HealthHolder")?.GetComponent<FillBar>();
     }
     public void OnDetectedObj()
     {
@@ -24,11 +26,13 @@ public class InteractOjb : MonoBehaviour, IDetectedObj
             OnFullBar();
             isFullBar = true;
         }
+        fillBar.OnFillNumberChange.Invoke(fullFillValue / maxFullFillValue);
     }
     public void OutDetectedObj()
     {
         if (fullFillValue >= maxFullFillValue) return;
         fullFillValue = 0;
+        fillBar.OnFillNumberChange.Invoke(0f);
     }
     private void OnFullBar()
     {
