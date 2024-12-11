@@ -40,6 +40,7 @@ public class StarterAssetsInputs : MonoBehaviour
 
 
 		OnTapEvent.Invoke();
+		Debug.Log("TAPPPPPPP");
 
 
 	}

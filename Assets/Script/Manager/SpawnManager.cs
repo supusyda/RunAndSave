@@ -30,8 +30,11 @@ public class SpawnManager : MonoBehaviour
     {
         level.cats.ForEach(cat =>
         {
-            Spawn(cat.prefab, cat.GetCatPos());
+            Transform spawn = Spawn(cat.prefab, cat.GetCatPos());
+            Debug.Log("SPAWN CATTTTTTTTTTTTTTTTTTTTTTTTTTt" + spawn);
         });
+
+
     }
     private void SpawnFinishline(LevelSO level)
     {

@@ -1,5 +1,6 @@
 using System;
 using System.Collections.Generic;
+using System.Linq;
 using DG.Tweening;
 using UnityEngine;
 
@@ -40,7 +41,10 @@ public class ChasingSO : ScriptableObject
 
     }
 
-
+    public float GetRoadLength()
+    {
+        return phases.Max(phases => phases.distance);
+    }
 
 
 }

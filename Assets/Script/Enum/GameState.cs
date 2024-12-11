@@ -10,6 +10,7 @@ public enum GameState
     Start,
     WaitForInput,
     GameOver,
-    Win
-
+    Win,
+    ReStart
+    , Init
 }

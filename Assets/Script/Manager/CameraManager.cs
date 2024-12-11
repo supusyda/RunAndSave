@@ -6,19 +6,28 @@ public class CameraManager : MonoBehaviour
 {
     // Start is called once before the first execution of Update after the MonoBehaviour is created
     public static CameraManager Instance { get; private set; }
-    [SerializeField] private CinemachineVirtualCamera phase1Cam;
-    [SerializeField] private CinemachineVirtualCamera phase2Cam;
+    private CinemachineVirtualCamera phase1Cam;
+    private CinemachineVirtualCamera phase2Cam;
     Logger logger;
 
     void OnEnable()
     {
         GameManager.OnPassFinishLine.AddListener(OnPassFinishLine);
     }
-    void OnDisable()
+    void
+    OnDisable()
     {
         GameManager.OnPassFinishLine.RemoveListener(OnPassFinishLine);
     }
 
+    public void GetCamRef()
+    {
+        if (phase1Cam == null && phase2Cam == null)
+        {
+            phase1Cam = GameObject.FindWithTag("CamPhase1").GetComponent<CinemachineVirtualCamera>();
+            phase2Cam = GameObject.FindWithTag("CamPhase2").GetComponent<CinemachineVirtualCamera>();
+        }
+    }
     private void OnPassFinishLine(int phaseID)
     {
         if (phaseID == 1)
@@ -42,5 +51,6 @@ public class CameraManager : MonoBehaviour
         DontDestroyOnLoad(gameObject); // Keep the instance across scenes
 
         logger = GetComponent<Logger>();
+
     }
 }

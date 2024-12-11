@@ -6,14 +6,16 @@ using UnityEngine.Events;
 public class GameManager : MonoBehaviour
 {
 
-    public static GameManager Instance { get; private set; }
     [SerializeField] private List<LevelSO> _levels = new();
+    public static GameManager Instance { get; private set; }
     public static UnityEvent<int> OnPassFinishLine = new();
 
     private GameState _currentGameState;
-    Logger logger;
+    private Logger logger;
     private int _currentLevel = 1;
     private int _currentPhase = 1;
+
+    public int currentScore = 0;
 
 
     private void Awake()
@@ -33,49 +35,65 @@ public class GameManager : MonoBehaviour
     void OnEnable()
     {
         OnPassFinishLine.AddListener(PassFinishLine);
+        InteractOjb.OnBarFillFull.AddListener(OnBarFillFull);
     }
     void OnDisable()
     {
         OnPassFinishLine.RemoveListener(PassFinishLine);
-    }
-    private void PassFinishLine(int finishLineNum)
-    {
+        InteractOjb.OnBarFillFull.RemoveListener(OnBarFillFull);
 
+    }
+    private void OnBarFillFull()
+    {
+        currentScore++;
+        ScoreUI.UpdateScore.Invoke(currentScore, _levels[_currentLevel - 1].cats.Count);
+    }
+    private void PassFinishLine(int finishLineNum)// could use enum
+    {
+        if (finishLineNum == 2)// last finish line
+        {
+            ChangeGameState(GameState.GameOver);
+        }
     }
 
     void Start()
     {
-        ChangeGameState(GameState.SpawnCat);
+        ChangeGameState(GameState.Init);
     }
     public void ChangeGameState(GameState newState)
     {
         switch (newState)
         {
             case GameState.SpawnCat:
-                SpawnManager.OnSpawnCat.Invoke(_levels[_currentLevel - 1]);
-                logger.Log("SpawnCat", this);
-                ChangeGameState(GameState.SpawnChasing);
-                _currentGameState = GameState.SpawnCat;
+
+
+
                 break;
             case GameState.SpawnObject:
-                SpawnManager.OnSpawnFinishLine.Invoke(_levels[_currentLevel - 1]);
-                logger.Log("SpawnObject", this);
-                _currentGameState = GameState.SpawnObject;
+
+
                 break;
             case GameState.SpawnChasing:
-                Chasing.SetUpChasing.Invoke(_levels[_currentLevel - 1].chasingSO);
-                logger.Log("SpawnChasing", this);
-                ChangeGameState(GameState.SpawnObject);
+
+
                 _currentGameState = GameState.SpawnChasing;
                 break;
             case GameState.CutScene:
                 break;
             case GameState.Start:
                 break;
-            case GameState.WaitForInput:
+            case GameState.Init:
+                logger.Log("INIT", this);
+                SpawnManager.OnSpawnCat.Invoke(_levels[_currentLevel - 1]);
+                SpawnManager.OnSpawnFinishLine.Invoke(_levels[_currentLevel - 1]);
+                Chasing.SetUpChasing.Invoke(_levels[_currentLevel - 1].chasingSO);
+                ScoreUI.UpdateScore.Invoke(currentScore, _levels[_currentLevel - 1].cats.Count);//init score UI
+                CameraManager.Instance.GetCamRef();
+                LevelProgressBar.OnRoadProgressBarInit.Invoke(_levels[_currentLevel - 1].chasingSO.GetRoadLength());
+                ChangeGameState(GameState.Start);
                 break;
             case GameState.GameOver:
-                break;
+                GameOverUI.OnGameOver.Invoke(); break;
             case GameState.Win:
                 break;
 

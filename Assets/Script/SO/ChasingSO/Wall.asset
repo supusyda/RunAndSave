@@ -16,6 +16,6 @@ MonoBehaviour:
   - speed: 10
     distance: 150
   - speed: 10
-    distance: 400
+    distance: 200
   - speed: 40
-    distance: 1000
+    distance: 300

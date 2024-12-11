@@ -47,7 +47,7 @@
                     "id": "49a96716-23b5-47e0-bef3-0b3594574e08",
                     "expectedControlType": "",
                     "processors": "",
-                    "interactions": "",
+                    "interactions": "Tap",
                     "initialStateCheck": false
                 }
             ],
@@ -156,8 +156,8 @@
                     "id": "e2f9aa65-db06-4c5b-a2e9-41bc8acb9517",
                     "path": "<Gamepad>/leftStick",
                     "interactions": "",
-                    "processors": "StickDeadzone",
-                    "groups": "Gamepad",
+                    "processors": "NormalizeVector2",
+                    "groups": ";Gamepad",
                     "action": "Move",
                     "isComposite": false,
                     "isPartOfComposite": false
@@ -231,7 +231,7 @@
                 {
                     "name": "",
                     "id": "8cb76175-69f1-4d04-bba6-be17bfe04ac8",
-                    "path": "<Mouse>/leftButton",
+                    "path": "<Keyboard>/z",
                     "interactions": "",
                     "processors": "",
                     "groups": ";KeyboardMouse;New Control Scheme",

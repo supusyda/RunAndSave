@@ -39,7 +39,6 @@ public class FillBar : MonoBehaviour
         {
             StopCoroutine(_fillCoroutine);
             fillImage.fillAmount = 0;
-            Debug.Log("0000");
             _canvasGroup.alpha = 0;
             return;
         }
@@ -55,7 +54,7 @@ public class FillBar : MonoBehaviour
         {
             StopCoroutine(_fillCoroutine); // Stop the previous coroutine if it's running
         }
-        Debug.Log("SDS");
+
         _fillCoroutine = StartCoroutine(SmoothFill(targetFill));
     }
 
@@ -73,6 +72,11 @@ public class FillBar : MonoBehaviour
 
         // Ensure the final value is set
         fillImage.fillAmount = targetFill;
+        if (fillImage.fillAmount >= 1) // hide when bar is full
+        {
+            _canvasGroup.alpha = 0;
+
+        }
     }
 
 

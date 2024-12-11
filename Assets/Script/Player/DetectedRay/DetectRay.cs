@@ -18,7 +18,7 @@ public class DetectRay : MonoBehaviour
         logger = GetComponent<Logger>();
         objHolder = transform.parent.Find("CatHolder");
     }
-    void FixedUpdate()
+    void Update()
     {
         Detect();
     }
@@ -40,7 +40,7 @@ public class DetectRay : MonoBehaviour
             currentObjectDetect.detector = objHolder;
             currentObjectDetect.OnDetectedObj();
 
-            return; //right thing so stop check other rays
+            return; //right thing detected, so stop check other rays
         }
 
         //not detect current object anymore aka: out of vison
