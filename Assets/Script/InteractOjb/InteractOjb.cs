@@ -45,7 +45,7 @@ public class InteractOjb : MonoBehaviour, IDetectedObj
         fullFillValue = maxFullFillValue;
         isFullBar = true;
 
-        jumpOnPlayerHead.playerHead = detector;
+        jumpOnPlayerHead.playerHead = detector;//get ref of player head
         jumpOnPlayerHead.JumpToPlayer();
         randomWalk.Reset();
 

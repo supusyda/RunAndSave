@@ -3,70 +3,21 @@ using UnityEngine;
 
 public class RandomWalk : MonoBehaviour
 {
-    // Start is called once before the first execution of Update after the MonoBehaviour is created
-    // public Vector3 startPos;
-    // public float walkRadius = 5f;
-    // public float speed = 2f;       // Speed
-    // public float changeDirectionInterval = 2f; // Time between direction changes
-    // public bool isRandomWalk = true;
 
-
-    // private Vector3 targetPosition;
-    // private float changeDirectionTimer;
-
-    // void OnEnable()
-    // {
-    //     // Initialize at spawn position
-
-    // }
-    // void Start()
-    // {
-    //     startPos = transform.position;
-
-
-    //     // Set initial random target position
-    //     SetRandomTargetPosition();
-    // }
-    // void Update()
-    // {
-
-    //     if (!isRandomWalk) return;
-    //     // Move towards the target position
-
-    //     transform.position = Vector3.MoveTowards(transform.position, targetPosition, speed * Time.deltaTime);
-
-    //     // Check if it's time to pick a new direction
-    //     changeDirectionTimer -= Time.deltaTime;
-    //     if (changeDirectionTimer <= 0f || Vector3.Distance(transform.position, targetPosition) < 0.1f)
-    //     {
-    //         SetRandomTargetPosition();
-    //     }
-    // }
-
-    // void SetRandomTargetPosition()
-    // {
-    //     // Pick a random point within the walk radius
-    //     Vector3 randomDirection = Random.insideUnitSphere * walkRadius;
-    //     randomDirection.y = 0; // Ensure movement is on a flat plane
-    //     targetPosition = startPos + randomDirection;
-
-    //     // Reset the direction change timer
-    //     changeDirectionTimer = changeDirectionInterval;
-    // }
     public float moveSpeed = 5f; // Speed of movement
     public float directionChangeInterval = 2f; // Time interval to change direction
     private Rigidbody rb;
-    private Vector3 randomDirection;
-    private Vector3 spawnPosition; // Store the spawn position
-    private bool isRandomWalk = true;
+    [SerializeField] private Vector3 randomDirection;
+    // private Vector3 spawnPosition; // Store the spawn position
+    [SerializeField] private bool isRandomWalk = true;
     Coroutine randWalkCoroutine;
-
+    // private Vector3 targetDirection;
 
 
     void Start()
     {
         rb = GetComponent<Rigidbody>();
-        spawnPosition = transform.position; // Record the spawn position
+        // spawnPosition = transform.position; // Record the spawn position
 
         BeginWalk();
     }
@@ -78,7 +29,8 @@ public class RandomWalk : MonoBehaviour
     void FixedUpdate()
     {
         // Apply movement in the current random direction
-        if (!isRandomWalk) return;
+        if (isRandomWalk == false) { return; }
+        RotateTowardsTarget();
         rb.linearVelocity = randomDirection * moveSpeed;
     }
 
@@ -96,14 +48,25 @@ public class RandomWalk : MonoBehaviour
 
     public void Reset()
     {
-        // Reset position and stop movement
-        // transform.position = spawnPosition;
-        rb.linearVelocity = Vector3.zero;
 
-        // Optionally reset random direction
+        rb.linearVelocity = Vector3.zero;
         randomDirection = Vector3.zero;
+
         isRandomWalk = false;
+        transform.rotation = Quaternion.Euler(Vector3.zero);
         if (randWalkCoroutine != null) StopCoroutine(randWalkCoroutine);
 
+    }
+    void RotateTowardsTarget()
+    {
+        // Smoothly rotate towards target direction with adjustable rotation speed
+        float rotationSpeed = 5f;  // Adjust as needed
+
+        if (randomDirection != Vector3.zero)  // Avoid unnecessary rotations
+        {
+            // Debug.Log("");
+            Quaternion targetRotation = Quaternion.LookRotation(randomDirection);
+            transform.rotation = Quaternion.Lerp(transform.rotation, targetRotation, Time.deltaTime * rotationSpeed);
+        }
     }
 }

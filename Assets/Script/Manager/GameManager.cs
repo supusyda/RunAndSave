@@ -9,6 +9,9 @@ public class GameManager : MonoBehaviour
     [SerializeField] private List<LevelSO> _levels = new();
     public static GameManager Instance { get; private set; }
     public static UnityEvent<int> OnPassFinishLine = new();
+    public static UnityEvent<GameState> ChangeState = new();
+    public static UnityEvent<LevelSO> Init = new();
+
 
     private GameState _currentGameState;
     private Logger logger;
@@ -36,11 +39,18 @@ public class GameManager : MonoBehaviour
     {
         OnPassFinishLine.AddListener(PassFinishLine);
         InteractOjb.OnBarFillFull.AddListener(OnBarFillFull);
+        ChangeState.AddListener(ChangeGameState);
+        // StarterAssetsInputs.OnTapEvent.AddListener(OnTapEvent);
     }
+
+
+
     void OnDisable()
     {
         OnPassFinishLine.RemoveListener(PassFinishLine);
         InteractOjb.OnBarFillFull.RemoveListener(OnBarFillFull);
+        ChangeState.RemoveListener(ChangeGameState);
+        // StarterAssetsInputs.OnTapEvent.RemoveListener(OnTapEvent);
 
     }
     private void OnBarFillFull()
@@ -81,24 +91,41 @@ public class GameManager : MonoBehaviour
             case GameState.CutScene:
                 break;
             case GameState.Start:
+                _currentGameState = GameState.Start;
+
+                break;
+            case GameState.CountDown:
+                CountdownUI.BeginCountDown.Invoke();
+                _currentGameState = GameState.CountDown;
                 break;
             case GameState.Init:
                 logger.Log("INIT", this);
-                SpawnManager.OnSpawnCat.Invoke(_levels[_currentLevel - 1]);
-                SpawnManager.OnSpawnFinishLine.Invoke(_levels[_currentLevel - 1]);
+                SpawnManager.Init.Invoke(_levels[_currentLevel - 1]);
+
+
                 Chasing.SetUpChasing.Invoke(_levels[_currentLevel - 1].chasingSO);
                 ScoreUI.UpdateScore.Invoke(currentScore, _levels[_currentLevel - 1].cats.Count);//init score UI
                 CameraManager.Instance.GetCamRef();
                 LevelProgressBar.OnRoadProgressBarInit.Invoke(_levels[_currentLevel - 1].chasingSO.GetRoadLength());
-                ChangeGameState(GameState.Start);
+
+                currentScore = 0;
+                _currentGameState = GameState.Init;
+                ChangeGameState(GameState.CountDown);
                 break;
             case GameState.GameOver:
-                GameOverUI.OnGameOver.Invoke(); break;
+                GameOverUI.OnGameOver.Invoke();
+                _currentGameState = GameState.GameOver;
+
+                break;
             case GameState.Win:
                 break;
 
             default:
                 break;
         }
+    }
+    public GameState GetCurrentState()
+    {
+        return _currentGameState;
     }
 }

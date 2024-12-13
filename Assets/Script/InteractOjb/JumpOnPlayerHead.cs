@@ -32,7 +32,7 @@ public class JumpOnPlayerHead : MonoBehaviour
             duration
         ).SetEase(Ease.OutQuad).OnUpdate(() =>
         {
-            jumpTarget = new Vector3(playerHead.position.x, playerHead.position.y + (Vector3.up * offsetBetweenEachObj * stackCount).y, playerHead.position.z);
+            // jumpTarget = new Vector3(playerHead.position.x, playerHead.position.y + (Vector3.up * offsetBetweenEachObj * stackCount).y, playerHead.position.z);
 
         }).OnComplete(() =>
         {

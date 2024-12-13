@@ -9,6 +9,8 @@ public class LevelSO : ScriptableObject
     public List<CatData> cats = new List<CatData>();
     public ChasingSO chasingSO;
     public List<Phase> phases = new List<Phase>();
+    public List<Transform> objectPrefabs = new();
+    public int totalOjb = 5;
 
 
 }

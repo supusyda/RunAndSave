@@ -21,7 +21,7 @@ public class LevelManager : MonoBehaviour
         if (Instance == null)
         {
             Instance = this; Debug.Log("DONT DESTROY");
-            DontDestroyOnLoad(transform.root.gameObject);
+            DontDestroyOnLoad(transform.gameObject);
             // Keep across scene loads
         }
         else
@@ -58,10 +58,12 @@ public class LevelManager : MonoBehaviour
     void LoadEvent()
     {
         RestartBtn.restartGame.AddListener(OnReset);
+        StartGameDefaultBtn.OnStartGameDefault.AddListener(OnStartGameDefault);
     }
     void RemoveEvent()
     {
         RestartBtn.restartGame.RemoveListener(OnReset);
+        StartGameDefaultBtn.OnStartGameDefault.RemoveListener(OnStartGameDefault);
     }
     ITransition GetTransitionByName(string name)
     {
@@ -101,7 +103,7 @@ public class LevelManager : MonoBehaviour
         // yield return new WaitUntil(() => asyncLoad.isDone);
         yield return null;
 
-        callback.Invoke();
+        callback?.Invoke();
         yield return transition.TransitionOut();
 
     }
@@ -165,6 +167,11 @@ public class LevelManager : MonoBehaviour
         {
             GameManager.Instance.ChangeGameState(GameState.Init);
         }));
+
+    }
+    void OnStartGameDefault()
+    {
+        TransitionToScene("game", "Circle");
 
     }
     // void OnClickBackBtn()

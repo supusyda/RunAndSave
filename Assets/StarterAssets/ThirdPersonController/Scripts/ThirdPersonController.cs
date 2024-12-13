@@ -16,10 +16,10 @@ namespace StarterAssets
     {
         [Header("Player")]
         [Tooltip("Move speed of the character in m/s")]
-        public float MoveSpeed = 2.0f;
+        private float _moveSpeed = 2.0f;
 
         [Tooltip("Sprint speed of the character in m/s")]
-        public float SprintSpeed = 5.335f;
+        private float _sprintSpeed = 5.335f;
 
         [Tooltip("How fast the character turns to face movement direction")]
         [Range(0.0f, 0.3f)]
@@ -124,6 +124,7 @@ namespace StarterAssets
         float tapMagnitude = 1f;
         public bool isPhase2 = false;
         private bool _canMove = true;
+        [SerializeField] PlayerStat playerStat;
 
 
         private void Awake()
@@ -148,7 +149,14 @@ namespace StarterAssets
             const float additinalManitudePerTap = .3f;
             const float additinalManitudeMax = 2f;
 
-
+            if (GameManager.Instance.GetCurrentState() == GameState.CountDown)
+            {
+                tapMagnitude += additinalManitudePerTap;
+                tapMagnitude = Mathf.Clamp(tapMagnitude, 0f, additinalManitudeMax);
+                Debug.Log(tapMagnitude);
+                Debug.Log("INCRESE SPEEDDDD");
+                return;
+            }
 
             if (isPhase2 == true && _canMove == true)// phase 2 
             {
@@ -176,6 +184,9 @@ namespace StarterAssets
             _fallTimeoutDelta = FallTimeout;
             isPhase2 = false;
             _canMove = true;
+            _moveSpeed = playerStat.speed;
+            _sprintSpeed = playerStat.maxSpeed;
+
             _input.OnTapEvent.AddListener(OnTapEvent);
             GameManager.OnPassFinishLine.AddListener(OnPassFinishLine);
 
@@ -197,6 +208,9 @@ namespace StarterAssets
 
         private void Update()
         {
+
+            if (GameManager.Instance.GetCurrentState() != GameState.Start) return; //only move when game start
+
             _hasAnimator = TryGetComponent(out _animator);
 
             if (!_canMove) return;
@@ -261,7 +275,7 @@ namespace StarterAssets
         private void Move()
         {
             // set target speed based on move speed, sprint speed and if sprint is pressed
-            float targetSpeed = MoveSpeed;
+            float targetSpeed = _moveSpeed;
 
             // a simplistic acceleration and deceleration designed to be easy to remove, replace, or iterate upon
 
@@ -330,7 +344,7 @@ namespace StarterAssets
         private void MoveOnTap()
         {
             // set target speed based on move speed, sprint speed and if sprint is pressed
-            float targetSpeed = MoveSpeed;
+            float targetSpeed = _moveSpeed;
             const float reducetapMagnitudeMul = 1f;
             // Debug.Log(tapMagnitude);
             // a simplistic acceleration and deceleration designed to be easy to remove, replace, or iterate upon
@@ -346,7 +360,7 @@ namespace StarterAssets
             // if there is no input, set the target speed to 0
             _input.move = Vector2.up;
             targetSpeed += tapMagnitude;
-            targetSpeed = Mathf.Clamp(targetSpeed, MoveSpeed, SprintSpeed);
+            targetSpeed = Mathf.Clamp(targetSpeed, _moveSpeed, _sprintSpeed);
             // Debug.Log("targetSpeed" + targetSpeed);
             // a reference to the players current horizontal velocity
             float currentHorizontalSpeed = new Vector3(_controller.velocity.x, 0.0f, _controller.velocity.z).magnitude;
@@ -360,7 +374,7 @@ namespace StarterAssets
                 // creates curved result rather than a linear one giving a more organic speed change
                 // note T in Lerp is clamped, so we don't need to clamp our speed
                 float newSpeed = targetSpeed * tapMagnitude;
-                newSpeed = Mathf.Clamp(newSpeed, MoveSpeed, SprintSpeed);
+                newSpeed = Mathf.Clamp(newSpeed, _moveSpeed, _sprintSpeed);
 
                 _speed = Mathf.Lerp(currentHorizontalSpeed, newSpeed,
                     Time.deltaTime * SpeedChangeRate);
@@ -395,7 +409,7 @@ namespace StarterAssets
                 // Debug.Log("_speed" + _speed);
                 // Debug.Log(_speed / MoveSpeed);
                 _animator.SetFloat(_animIDSpeed, _animationBlend);
-                _animator.SetFloat(_animIDMotionSpeed, _speed / MoveSpeed);
+                _animator.SetFloat(_animIDMotionSpeed, _speed / _moveSpeed);
             }
         }
         private void JumpAndGravity()
