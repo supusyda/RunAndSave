@@ -71,7 +71,7 @@ public class ChasingSO : ScriptableObject
     public static ChasingSO GetChasingSOBaseOnThisSO(ChasingSO thisChasingSO, int levelMultiplyer)
     {
         ChasingSO newChasingSO = new ChasingSO(thisChasingSO);
-        List<Phase> newCatData = new List<Phase>();
+        List<Phase> newPhasesData = new List<Phase>();
         Phase phase;
 
         for (int i = 0; i < thisChasingSO.phases.Count; i++)
@@ -80,16 +80,15 @@ public class ChasingSO : ScriptableObject
             {
                 phase = new Phase(thisChasingSO.phases[i].speed, thisChasingSO.phases[i].distance);
             }
-            else
+            else // other phase change distance and speed acording to level multiplyer
             {
                 phase = new Phase(thisChasingSO.phases[i].speed * levelMultiplyer, thisChasingSO.phases[i].distance * levelMultiplyer);
             }
-            Debug.Log("PhaSE " + i + " new speed" + phase.speed);
-            Debug.Log("PhaSE " + i + "new distant" + phase.distance);
-            newCatData.Add(phase);
+
+            newPhasesData.Add(phase);
         }
         // newChasingSO.phases.Clear();
-        newChasingSO.phases = newCatData;
+        newChasingSO.phases = newPhasesData;
 
         return newChasingSO;
     }

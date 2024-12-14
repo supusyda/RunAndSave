@@ -103,7 +103,7 @@ public class GameManager : MonoBehaviour
 
                 _isLevelByDesign = true;
                 currentScore = 0;
-                SetUpGame(_levels[_currentLevel - 1]);
+                SetUpGame(_levels[0]); // get the default level 
 
                 _currentGameState = GameState.Init;
                 ChangeGameState(GameState.CountDown);
