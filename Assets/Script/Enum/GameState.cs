@@ -12,6 +12,7 @@ public enum GameState
     GameOver,
     Win,
     ReStart
-    , Init, CountDown
+    , Init, InitByLevel
+    , CountDown
 
 }

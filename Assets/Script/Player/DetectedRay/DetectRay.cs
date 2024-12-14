@@ -47,7 +47,7 @@ public class DetectRay : MonoBehaviour
         if (currentObjectDetect == null) return;
         currentObjectDetect.OutDetectedObj();
         currentObjectDetect = null; // out of detectZone
-        logger.Log("Reset", this);
+
 
     }
 

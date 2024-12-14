@@ -3,17 +3,26 @@ using System.Collections;
 using System.Collections.Generic;
 using System.Linq;
 using UnityEngine;
+using UnityEngine.Events;
 using UnityEngine.SceneManagement;
 
 public class LevelManager : MonoBehaviour
 {
     // Start is called before the first frame update
     const string Current_Level = "Current_Level";
+    public string GAME_SCENE = "game";
+    public string LEVEL_SCENE = "LevelSelect";
+    public string MAIN_MENU_SCENE = "Menu";
+
+
+
+
     public static LevelManager Instance { get; private set; }
+    [SerializeField] List<Transform> transitions;
     private int currentLevel = 1;
 
     private List<string> levelFiles;
-    [SerializeField] List<Transform> transitions;
+    public static UnityEvent<int> OnSelectLevel = new();
 
     private void Awake()
     {
@@ -59,7 +68,11 @@ public class LevelManager : MonoBehaviour
     {
         RestartBtn.restartGame.AddListener(OnReset);
         StartGameDefaultBtn.OnStartGameDefault.AddListener(OnStartGameDefault);
+        LevelBtn.OnLevelClick.AddListener(OnLevelSelect);
     }
+
+
+
     void RemoveEvent()
     {
         RestartBtn.restartGame.RemoveListener(OnReset);
@@ -127,68 +140,28 @@ public class LevelManager : MonoBehaviour
     {
         return currentLevel;
     }
-    // public void LoadNextLevel()
-    // {
-    //     currentLevel += 1;
-    //     if (!HandleSave.HasLevel(currentLevel))
 
-    //     {
-    //         Event.OnGameOver.Invoke();
-    //         return;
-    //     }
-    //     LoadLevel(currentLevel);
-    // }
-
-    // public void LoadLevel(int level)
-    // {
-    //     GridEditManager.OnLoadPlayLevel.Invoke(level);
-    //     CommandScheduler.Clear();
-    // }
-    // public void LoadLevelFormMenu(int level)
-    // {
-    //     // TransitionToScene("Game2");
-    //     SetCurrentLevel(level);
-    //     TransitionToScene("Game2", "Circle");
-
-    // }
-    // void OnWin()
-    // {
-    //     SaveCurrentLevelToPlayerPref();
-    //     if (!HandleSave.HasLevel(currentLevel + 1))
-    //     {
-    //         Event.OnGameOver.Invoke();
-    //         return;
-    //     }
-    //     StartCoroutine(NextLevelAnim("Circle"));
-    // }
     void OnReset()
     {
         TransitionToScene("game", "Circle", (() =>
         {
-            GameManager.Instance.ChangeGameState(GameState.Init);
+            GameManager.Instance.ResetLevel();
         }));
 
     }
     void OnStartGameDefault()
     {
-        TransitionToScene("game", "Circle");
+        TransitionToScene("game", "Circle", (() =>
+       {
+           GameManager.Instance.ChangeGameState(GameState.Init);
+       }));
 
     }
-    // void OnClickBackBtn()
-    // {
-    //     TransitionToScene("Menu", "Circle");
-    // }
-    // void SaveCurrentLevelToPlayerPref()
-    // {
-    //     if (LoadCurrentLevelFormPlayerPref() > currentLevel) return;
-    //     PlayerPrefs.SetInt("Current_Level", currentLevel);
-    //     PlayerPrefs.Save(); // Ensure the changes are written to storage.
-    //     Debug.Log("Level saved: " + currentLevel);
-    // }
-    // public int LoadCurrentLevelFormPlayerPref()
-    // {
-    //     int level = PlayerPrefs.GetInt(Current_Level, 1); // Default to level 1 if not set.
-
-    //     return level;
-    // }
+    private void OnLevelSelect(int levelID)
+    {
+        TransitionToScene(GAME_SCENE, "Circle", (() =>
+       {
+           LevelManager.OnSelectLevel.Invoke(levelID);
+       }));
+    }
 }

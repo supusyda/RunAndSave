@@ -11,6 +11,8 @@ public class SpawnManager : MonoBehaviour
     public static SpawnManager Instance { get; private set; }
 
     public static UnityEvent<LevelSO> Init = new();
+    public static UnityEvent<LevelSO, int> InitByLevel = new();//base level and current level to multiply
+
 
 
     [SerializeField] private FinishLine finishLine1;
@@ -20,6 +22,8 @@ public class SpawnManager : MonoBehaviour
     {
 
         Init.AddListener(InitGame);
+
+
     }
 
     private void InitGame(LevelSO level)
@@ -36,13 +40,14 @@ public class SpawnManager : MonoBehaviour
         Init.RemoveListener(InitGame);
 
 
+
     }
     private void SpawnCat(LevelSO level)
     {
         level.cats.ForEach(cat =>
         {
             Transform spawn = Spawn(cat.prefab, cat.GetCatPos());
-            Debug.Log("SPAWN CATTTTTTTTTTTTTTTTTTTTTTTTTTt" + spawn);
+
         });
 
 
@@ -61,17 +66,15 @@ public class SpawnManager : MonoBehaviour
             Transform spawn = Spawn(level.objectPrefabs[randPrefab], randomPosOnRoad);
             spawn.gameObject.SetActive(true);
         }
-
-
-
-
     }
+
+
+
     private void SpawnFinishline(LevelSO level)
     {
         for (int i = 0; i < level.chasingSO.phases.Count; i++)
         {
             if (i == 0) continue; // Skip the first phase
-            Debug.Log("SKIP i == 0" + i);
             Phase phase = level.chasingSO.phases[i];
 
             Vector3 finishLinePos = MyUnit.GetMyVecUnit(new Vector3(0, 0, phase.distance));

@@ -29,6 +29,6 @@ public class Chasing : MonoBehaviour
         if (!other.CompareTag("Player")) return;
         _chasingSO?.Stop();
         GameManager.ChangeState?.Invoke(GameState.GameOver);
-        Debug.Log("TOUCH THE WAVE");
+
     }
 }
